@@ -6,3 +6,7 @@ node_modules/
 # local screenshot tooling leftovers (exports are downloads, not repo files)
 playwright-report/
 test-results/
+# local env / scratch files
+.env
+*.tmp
+coverage/

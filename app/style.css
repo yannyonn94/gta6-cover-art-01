@@ -5,67 +5,86 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Pacifico';
+  src: url('./fonts/pacifico.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-html, body { margin: 0; min-height: 100%; background: #14081f; color: #f2ecf7; font: 15px/1.45 system-ui, -apple-system, sans-serif; }
-.app { display: flex; gap: 28px; align-items: flex-start; justify-content: center; padding: 22px; box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #0d0a1a; color: #ece7f5; font: 15px/1.45 system-ui, -apple-system, sans-serif; }
+.app { display: flex; gap: 26px; align-items: flex-start; justify-content: center; padding: 20px; box-sizing: border-box; }
 
-.controls { display: flex; flex-direction: column; gap: 16px; width: 320px; flex: none; }
-.controls h1 { margin: 0; font-family: 'Anton', 'Arial Black', sans-serif; font-size: 34px; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 0 #ff2e9a, 0 4px 18px rgba(255, 46, 154, 0.45); }
-.controls .tag { margin: 0; color: #c9b8d6; }
+.controls { display: flex; flex-direction: column; gap: 15px; width: 340px; flex: none; }
+.controls h1 { margin: 0; font-family: 'Anton', 'Arial Black', sans-serif; font-size: 32px; letter-spacing: 0.03em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 0 #00e5ff, 0 4px 20px rgba(0, 229, 255, 0.4); }
+.controls .tag { margin: 0; color: #b8aed0; }
 .group { display: flex; flex-direction: column; gap: 8px; }
-.group h2 { margin: 0; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #9d8bb0; }
+.group h2 { margin: 0; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #8f86ad; }
 
 .row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font: inherit; font-weight: 600; padding: 8px 12px; border: 1px solid #4a365e; border-radius: 999px; background: #241533; color: #e9ddf3; cursor: pointer; }
-.chip:hover { border-color: #ff2e9a; }
-.chip.active { background: #ff2e9a; border-color: #ff2e9a; color: #fff; }
-.chip[data-grade="vice"].active { background: #8b2fe0; border-color: #c04dff; }
+.chip { font: inherit; font-weight: 600; padding: 8px 12px; border: 1px solid #463a68; border-radius: 8px; background: #1c1332; color: #e6ddf5; cursor: pointer; }
+.chip:hover { border-color: #00e5ff; }
+.chip.active { background: #00e5ff; border-color: #00e5ff; color: #062a33; }
+.chip[data-grade="neon"].active { background: #ff2e88; border-color: #ff2e88; color: #fff; }
+.chip[data-grade="gold"].active { background: #ffb703; border-color: #ffb703; color: #2a1c02; }
 .chip.preset { font-size: 13px; padding: 6px 10px; border-style: dashed; }
-.chip.preset.active { background: #ffb347; border-color: #ffb347; border-style: solid; color: #1c0f33; }
+.chip.preset.active { background: #ffd166; border-color: #ffd166; border-style: solid; color: #241503; }
+
+.dice { background: linear-gradient(135deg, #00e5ff, #ff2e88); box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3); }
+.dice:hover { filter: brightness(1.2); }
+.check { flex-direction: row; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
+.check input[type=checkbox] { width: 18px; height: 18px; accent-color: #00e5ff; cursor: pointer; }
+.hint-inline { color: #8f86ad; font-size: 13px; font-weight: 400; }
+kbd { font: 600 11px/1 system-ui, sans-serif; padding: 2px 5px; border: 1px solid rgba(255,255,255,0.35); border-bottom-width: 2px; border-radius: 4px; background: rgba(0,0,0,0.25); }
 
 label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 9px 10px; border: 1px solid #4a365e; border-radius: 8px; background: #1d1029; color: #fff; }
-input[type=text]:focus { outline: 2px solid #ff2e9a; outline-offset: 1px; }
+input[type=text] { font: inherit; padding: 9px 10px; border: 1px solid #463a68; border-radius: 8px; background: #150e26; color: #fff; }
+input[type=text]:focus { outline: 2px solid #00e5ff; outline-offset: 1px; }
 
-.dropzone { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px dashed #6b4d86; border-radius: 10px; color: #c9b8d6; }
-.dropzone.over { border-color: #ff2e9a; background: rgba(255, 46, 154, 0.12); }
-.file-btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #ff2e9a; color: #fff; font-weight: 700; cursor: pointer; }
+.dropzone { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px dashed #5b4a85; border-radius: 10px; color: #b8aed0; }
+.dropzone.over { border-color: #00e5ff; background: rgba(0, 229, 255, 0.1); }
+.file-btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #00e5ff; color: #062a33; font-weight: 700; cursor: pointer; }
 .file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
 
 .thumbs { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
-.thumb { display: flex; flex-direction: column; gap: 2px; width: 84px; flex: none; padding: 0; border: 2px solid transparent; border-radius: 8px; background: none; cursor: pointer; color: #c9b8d6; font: 11px/1.2 system-ui, sans-serif; }
+.thumb { display: flex; flex-direction: column; gap: 2px; width: 84px; flex: none; padding: 0; border: 2px solid transparent; border-radius: 8px; background: none; cursor: pointer; color: #b8aed0; font: 11px/1.2 system-ui, sans-serif; }
 .thumb img { width: 100%; height: 62px; object-fit: cover; border-radius: 6px; display: block; }
 .thumb span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.thumb:hover { border-color: #6b4d86; }
-.thumb.active { border-color: #ffb347; }
-.hint { margin: 0; color: #9d8bb0; font-size: 13px; }
+.thumb:hover { border-color: #5b4a85; }
+.thumb.active { border-color: #ffd166; }
+.hint { margin: 0; color: #8f86ad; font-size: 13px; }
 
 .slider { flex-direction: row; align-items: center; gap: 10px; }
-.slider input[type=range] { flex: 1; accent-color: #ff2e9a; }
-.slider span { min-width: 44px; text-align: right; color: #e9ddf3; }
+.slider input[type=range] { flex: 1; accent-color: #00e5ff; }
+.slider span { min-width: 44px; text-align: right; color: #e6ddf5; }
 
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 8px; background: #2c1a3e; color: #fff; cursor: pointer; }
+button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 8px; background: #241a3e; color: #fff; cursor: pointer; }
 button:hover { filter: brightness(1.15); }
-button.primary { background: #ff2e9a; font-size: 16px; padding: 12px; }
-button.ghost { background: transparent; border: 1px solid #4a365e; color: #c9b8d6; font-weight: 600; }
+button:disabled { opacity: 0.4; cursor: default; filter: none; }
+button.primary { background: #ff2e88; font-size: 16px; padding: 12px; }
+button.ghost { background: transparent; border: 1px solid #463a68; color: #b8aed0; font-weight: 600; }
 .export-group { gap: 10px; }
 .export-group button { width: 100%; }
-.export-group button.primary { box-shadow: 0 4px 18px rgba(255, 46, 154, 0.4); }
+.export-group button.primary { box-shadow: 0 4px 18px rgba(255, 46, 136, 0.4); }
 
-#status { margin: 0; color: #9d8bb0; min-height: 1.2em; font-size: 13px; }
-.foot { margin: 0; color: #6f5d80; font-size: 12px; }
+#status { margin: 0; color: #8f86ad; min-height: 1.2em; font-size: 13px; }
+.foot { margin: 0; color: #6a5f86; font-size: 12px; }
 
-button:focus-visible, .chip:focus-visible, input:focus-visible { outline: 2px solid #ffb347; outline-offset: 2px; }
+button:focus-visible, .chip:focus-visible, input:focus-visible { outline: 2px solid #ffd166; outline-offset: 2px; }
+.check input[type=checkbox]:focus-visible { outline: 2px solid #ffd166; outline-offset: 2px; }
+.presets .chip { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 canvas { width: min(64vh, 58vw); height: auto; aspect-ratio: 1 / 1; box-shadow: 0 12px 44px rgba(0, 0, 0, 0.55); border-radius: 4px; cursor: grab; touch-action: none; }
 canvas:active { cursor: grabbing; }
 
-/* Narrow screens: controls stack above the cover. */
 @media (max-width: 900px) {
   .app { flex-direction: column; align-items: stretch; padding: 16px; gap: 18px; }
   .controls { width: auto; }
   canvas { width: 100%; }
-  .controls h1 { font-size: 30px; }
+  .controls h1 { font-size: 28px; }
+  .dice { flex: 1 1 0; }
+  .check { flex-wrap: wrap; }
 }
 
 body.shot-cover .controls { display: none; }
