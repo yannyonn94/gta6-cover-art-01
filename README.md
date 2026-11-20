@@ -5,7 +5,8 @@
 # Vice Cover Studio
 
 A free, offline web app that turns your photos into GTA 6-style cover art — the
-multi-panel poster look with a neon-sunset grade. Built for the
+multi-panel poster look with a neon-sunset grade, now with a fifth grade
+(Vice Purple) and one-tap caption presets. Built for the
 [make.fun bounty gta6-cover-art-01](https://make.fun/bounty/gta6-cover-art-01).
 
 ## What it does
@@ -13,16 +14,29 @@ multi-panel poster look with a neon-sunset grade. Built for the
 - **3 layouts** — Grid 2×2, Hero + 3, and Full bleed.
 - **Any photos** — upload your own (or drop them in), pick a photo per panel,
   drag to reposition and scroll / slide to zoom each panel.
-- **4 grades** — Sunset, Neon Vice, Noir, Palm, each with its own grade overlays
-  and vignette.
+- **5 grades** — Sunset, Neon Vice, Noir, Palm and the new Vice Purple
+  (violet/magenta neon), each with its own grade overlays and vignette.
 - **Caption** — editable title and subtitle in heavy display lettering
-  (Anton, vendored locally, OFL).
+  (Anton, vendored locally, OFL), or pick one of 5 ready-made GTA-style
+  caption presets in one tap.
 - **Export** — one-click PNG in 1080×1080, 1080×1350 and 1920×1080, drawn at
   full resolution on an offscreen canvas.
 
 Everything runs in the browser from local files — no network requests, no
 uploads, your photos never leave your machine. Two sample photos ship with the
 app so it works immediately.
+
+## Caption presets
+
+One tap fills title + subtitle with a ready-made GTA-style pair:
+
+| Preset | Title | Subtitle |
+| --- | --- | --- |
+| Vice City Nights | Vice City Nights | Grand Theft Auto VI |
+| Sunset Heist | Sunset Heist | Vice City |
+| Boulevard Queen | Boulevard Queen | Vice City |
+| Palm Paradise | Palm Paradise | Grand Theft Auto VI |
+| Neon Getaway | Neon Getaway | Leonida |
 
 ## Try it
 

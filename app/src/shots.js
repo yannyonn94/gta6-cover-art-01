@@ -1,8 +1,10 @@
 // Fixed scenes for screenshots: ?shot=editor shows the page with sample photos;
 // ?shot=cover shows the cover alone.
-// Query params: layout (grid|hero|full), grade (sunset|neon|noir|palm),
+// Query params: layout (grid|hero|full), grade (sunset|neon|noir|palm|vice),
 // size (1080x1080|1080x1350|1920x1080), photo (comma list of sample names),
-// caption (the title), subtitle. window.__shotReady is set once painted.
+// caption (the title), subtitle, preset (index into the CAPTIONS list).
+// window.__shotReady is set once painted.
+import { CAPTIONS } from './cover.js';
 const SIZES = {
   '1080x1080': [1080, 1080],
   '1080x1350': [1080, 1350],
@@ -28,8 +30,12 @@ export async function runShot(shot, query, state, draw) {
   const layout = query.get('layout');
   if (layout === 'grid' || layout === 'hero' || layout === 'full') state.layout = layout;
   const grade = query.get('grade');
-  if (grade === 'sunset' || grade === 'neon' || grade === 'noir' || grade === 'palm') {
+  if (grade === 'sunset' || grade === 'neon' || grade === 'noir' || grade === 'palm' || grade === 'vice') {
     state.grade = grade;
+  }
+  const preset = Number(query.get('preset'));
+  if (Number.isInteger(preset) && CAPTIONS[preset]) {
+    [state.title, state.subtitle] = CAPTIONS[preset];
   }
   const size = query.get('size');
   if (SIZES[size]) state.size = size;
@@ -77,6 +83,10 @@ export async function runShot(shot, query, state, draw) {
     b.classList.toggle('active', b.dataset.grade === state.grade));
   document.querySelectorAll('[data-size]').forEach((b) =>
     b.classList.toggle('active', b.dataset.size === state.size));
+  document.querySelectorAll('[data-preset]').forEach((b) =>
+    b.classList.toggle('active', CAPTIONS[Number(b.dataset.preset)] &&
+      CAPTIONS[Number(b.dataset.preset)][0] === state.title &&
+      CAPTIONS[Number(b.dataset.preset)][1] === state.subtitle));
 
   await draw();
   requestAnimationFrame(() => requestAnimationFrame(() => { window.__shotReady = true; }));

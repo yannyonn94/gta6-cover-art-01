@@ -1,7 +1,7 @@
 // Wires the page: layouts, grades, photos, caption, export.
 // State lives in one object; every control mutates it and calls redraw().
 // A `?shot=` query sets up a fixed scene for a screenshot instead (./shots.js).
-import { drawCover, LAYOUTS, GRADES, panelsFor } from './cover.js';
+import { drawCover, LAYOUTS, GRADES, CAPTIONS, panelsFor } from './cover.js';
 import { runShot } from './shots.js';
 
 export const SIZES = {
@@ -77,6 +77,19 @@ function setGrade(key) {
   document.querySelectorAll('[data-grade]').forEach((b) =>
     b.classList.toggle('active', b.dataset.grade === key));
   redraw();
+}
+
+/** Applies one of the ready-made GTA-style caption pairs. */
+function applyCaption(i) {
+  const pair = CAPTIONS[i];
+  if (!pair) return;
+  [state.title, state.subtitle] = pair;
+  document.getElementById('title').value = state.title;
+  document.getElementById('subtitle').value = state.subtitle;
+  document.querySelectorAll('[data-preset]').forEach((b) =>
+    b.classList.toggle('active', Number(b.dataset.preset) === i));
+  statusEl.textContent = `Caption: “${state.title}” — ${state.subtitle}`;
+  drawCover(canvas, state);
 }
 
 function selectPanel(i) {
@@ -157,15 +170,21 @@ function renderThumbs() {
 
 async function addFiles(files) {
   let added = 0;
+  let skipped = 0;
   for (const file of files) {
-    if (!file.type.startsWith('image/')) continue;
+    if (!file.type.startsWith('image/')) { skipped++; continue; }
+    const name = file.name.replace(/\.[^.]+$/, '');
+    if (state.library.some((l) => l.name === name)) { skipped++; continue; }
     try {
       const img = await loadImage(URL.createObjectURL(file));
-      state.library.push({ img, name: file.name.replace(/\.[^.]+$/, '') });
+      state.library.push({ img, name });
       added++;
-    } catch { /* skip unreadable files */ }
+    } catch { skipped++; }
   }
-  if (!added) return;
+  if (!added) {
+    if (skipped) statusEl.textContent = `Skipped ${skipped} file${skipped > 1 ? 's' : ''} (not an image, unreadable or already added)`;
+    return;
+  }
   // Fill empty panels with new photos, first come first served.
   let li = state.library.length - added;
   for (let i = 0; i < panelCount() && li < state.library.length; i++) {
@@ -177,7 +196,7 @@ async function addFiles(files) {
       li++;
     }
   }
-  statusEl.textContent = `Added ${added} photo${added > 1 ? 's' : ''}`;
+  statusEl.textContent = `Added ${added} photo${added > 1 ? 's' : ''}${skipped ? ` (${skipped} skipped)` : ''}`;
   redraw();
 }
 
@@ -261,6 +280,8 @@ document.querySelectorAll('[data-layout]').forEach((b) =>
   b.addEventListener('click', () => setLayout(b.dataset.layout)));
 document.querySelectorAll('[data-grade]').forEach((b) =>
   b.addEventListener('click', () => setGrade(b.dataset.grade)));
+document.querySelectorAll('[data-preset]').forEach((b) =>
+  b.addEventListener('click', () => applyCaption(Number(b.dataset.preset))));
 document.querySelectorAll('[data-size]').forEach((b) =>
   b.addEventListener('click', () => setSize(b.dataset.size)));
 

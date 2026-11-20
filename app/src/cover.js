@@ -4,7 +4,7 @@
 //
 // state = {
 //   layout: 'grid' | 'hero' | 'full',
-//   grade: 'sunset' | 'neon' | 'noir' | 'palm',
+//   grade: 'sunset' | 'neon' | 'noir' | 'palm' | 'vice',
 //   title: string, subtitle: string,
 //   panels: [{ img: HTMLImageElement | null, ox: number, oy: number, zoom: number }]
 // }
@@ -23,7 +23,17 @@ export const GRADES = {
   neon: { name: 'Neon Vice', accent: '#ff2e9a' },
   noir: { name: 'Noir', accent: '#e8e8e8' },
   palm: { name: 'Palm', accent: '#2ee6c8' },
+  vice: { name: 'Vice Purple', accent: '#c04dff' },
 };
+
+/** One-tap GTA-style caption pairs: [title, subtitle]. */
+export const CAPTIONS = [
+  ['Vice City Nights', 'Grand Theft Auto VI'],
+  ['Sunset Heist', 'Vice City'],
+  ['Boulevard Queen', 'Vice City'],
+  ['Palm Paradise', 'Grand Theft Auto VI'],
+  ['Neon Getaway', 'Leonida'],
+];
 
 /** Panel rectangles for a layout, in canvas pixels. Gutters are cream poster lines. */
 export function panelsFor(layout, W, H) {
@@ -64,11 +74,19 @@ function drawPhoto(ctx, img, rect, panel, grade) {
   ctx.rect(x, y, w, h);
   ctx.clip();
   if (!img) {
-    // Empty slot: a deep gradient so the panel still reads as poster art.
+    // Empty slot: a deep gradient in the grade's own palette so the panel
+    // still reads as poster art.
+    const empty = {
+      sunset: ['#5e2a1d', '#33160f', '#1f0b08'],
+      neon: ['#5e1d4e', '#330f2e', '#1f081c'],
+      noir: ['#3a3a3a', '#1c1c1c', '#101010'],
+      palm: ['#0f4a3a', '#0a2e26', '#061a15'],
+      vice: ['#4a1d7a', '#2a0f4d', '#180830'],
+    }[grade] || ['#3b1d5e', '#1c0f33', '#12081f'];
     const grad = ctx.createLinearGradient(x, y, x + w, y + h);
-    grad.addColorStop(0, '#3b1d5e');
-    grad.addColorStop(0.55, '#1c0f33');
-    grad.addColorStop(1, '#12081f');
+    grad.addColorStop(0, empty[0]);
+    grad.addColorStop(0.55, empty[1]);
+    grad.addColorStop(1, empty[2]);
     ctx.fillStyle = grad;
     ctx.fillRect(x, y, w, h);
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
@@ -79,6 +97,7 @@ function drawPhoto(ctx, img, rect, panel, grade) {
     return;
   }
   if (grade === 'noir') ctx.filter = 'grayscale(1) contrast(1.12) brightness(1.04)';
+  if (grade === 'vice') ctx.filter = 'saturate(1.3) contrast(1.06)';
   const base = Math.max(w / img.naturalWidth, h / img.naturalHeight);
   const scale = base * (panel.zoom || 1);
   const dw = img.naturalWidth * scale;
@@ -119,6 +138,14 @@ function gradeOverlay(ctx, grade, W, H) {
     grad.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H * 0.25);
+  } else if (grade === 'vice') {
+    // vice purple: violet top, magenta heart, deep purple foot
+    grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, 'rgba(150,60,255,0.22)');
+    grad.addColorStop(0.5, 'rgba(200,40,220,0.10)');
+    grad.addColorStop(1, 'rgba(60,0,120,0.30)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
   } else {
     // palm: teal top, warm gold bottom
     grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -134,7 +161,7 @@ function gradeOverlay(ctx, grade, W, H) {
     W / 2, H / 2, Math.max(W, H) * 0.75,
   );
   vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, grade === 'noir' ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.28)');
+  vig.addColorStop(1, grade === 'noir' ? 'rgba(0,0,0,0.5)' : grade === 'vice' ? 'rgba(20,0,40,0.38)' : 'rgba(0,0,0,0.28)');
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 }

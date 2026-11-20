@@ -1,1 +1,8 @@
 out/
+*.log
+.DS_Store
+node_modules/
+.cache/
+# local screenshot tooling leftovers (exports are downloads, not repo files)
+playwright-report/
+test-results/

@@ -2,22 +2,33 @@
 // static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
 // request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
 // /output/dossier.json, the summary the judge reads, with the vendored make.fun library. The app itself is Vice Cover
-// Studio: a multi-panel cover maker (Grid 2x2, Hero + 3, Full bleed) with four colour grades, per-panel photo
-// crop and position, display caption lettering and one-click PNG export in 1080x1080, 1080x1350 and 1920x1080.
-// Its two sample photos (app/samples/) were made for make.fun with an image model and are free to use. Put your 3 or
-// 4 PNG or JPEG screenshots in screenshots/ (the first by name is the cover) and run it.
+// Studio: a multi-panel cover maker (Grid 2x2, Hero + 3, Full bleed) with five colour grades, per-panel photo
+// crop and position, display caption lettering, one-tap caption presets and one-click PNG export in 1080x1080,
+// 1080x1350 and 1920x1080.
+// Its two sample photos (app/samples/) were made for make.fun with an image model and are free to use. Revised
+// entry: five colour grades (Sunset, Neon Vice, Noir, Palm, Vice Purple), one-tap caption presets, a scrollable
+// photo library strip and polished export controls. Put your 3 or 4 PNG or JPEG screenshots in screenshots/ (the
+// first by name is the cover) and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+// Fail loudly instead of handing in an empty entry: screenshots are required.
+if (!existsSync(join(here, 'screenshots'))) {
+  throw new Error('screenshots/ is missing — add 3 or 4 screenshots before running main.ts');
+}
+if (readdirSync(join(here, 'screenshots')).filter((f) => /\.(png|jpe?g)$/i.test(f)).length === 0) {
+  throw new Error('screenshots/ has no PNG/JPEG files — add 3 or 4 screenshots before running main.ts');
+}
 
 mkdirSync(out, { recursive: true });
 cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
@@ -38,3 +49,6 @@ writeFileSync(
     app_path_max_bytes: 1000,
   }),
 );
+
+// Small run summary so a failed or empty hand-in is obvious at a glance.
+console.log(`Vice Cover Studio → ${out}/dossier.json (app + screenshots copied)`);
