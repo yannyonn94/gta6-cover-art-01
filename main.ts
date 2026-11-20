@@ -2,12 +2,14 @@
 // static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
 // request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
 // /output/dossier.json, the summary the judge reads, with the vendored make.fun library. The app itself is Vice Cover
-// Studio: a multi-panel cover maker (Grid 2x2, Hero + 3, Full bleed) with five colour grades, per-panel photo
-// crop and position, display caption lettering, one-tap caption presets and one-click PNG export in 1080x1080,
+// Studio: a multi-panel cover maker (Grid 2x2, Hero + 3, Full bleed) with six colour grades, per-panel photo
+// crop and position, display caption lettering, one-tap caption presets, a one-tap Randomize button
+// (layout + grade + caption + photo assignment, R key too) and one-click PNG export in 1080x1080,
 // 1080x1350 and 1920x1080.
 // Its two sample photos (app/samples/) were made for make.fun with an image model and are free to use. Revised
-// entry: five colour grades (Sunset, Neon Vice, Noir, Palm, Vice Purple), one-tap caption presets, a scrollable
-// photo library strip and polished export controls. Put your 3 or 4 PNG or JPEG screenshots in screenshots/ (the
+// entry: six colour grades (Sunset, Neon Vice, Noir, Palm, Vice Purple, Golden Hour), one-tap caption presets, a
+// Randomize button, a scrollable photo library strip and polished export controls. The screenshots in
+// screenshots/ show the Golden Hour grade and a reshuffled cover. Put your 3 or 4 PNG or JPEG screenshots in screenshots/ (the
 // first by name is the cover) and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
@@ -28,6 +30,11 @@ if (!existsSync(join(here, 'screenshots'))) {
 }
 if (readdirSync(join(here, 'screenshots')).filter((f) => /\.(png|jpe?g)$/i.test(f)).length === 0) {
   throw new Error('screenshots/ has no PNG/JPEG files — add 3 or 4 screenshots before running main.ts');
+}
+// The scorer refuses more than 4 screenshots, so refuse early here too.
+const shotCount = readdirSync(join(here, 'screenshots')).filter((f) => /\.(png|jpe?g)$/i.test(f)).length;
+if (shotCount < 3 || shotCount > 4) {
+  throw new Error(`screenshots/ has ${shotCount} PNG/JPEG files — the entry needs exactly 3 or 4`);
 }
 
 mkdirSync(out, { recursive: true });

@@ -30,7 +30,14 @@
         <button data-grade="noir" class="chip" type="button">Noir</button>
         <button data-grade="palm" class="chip" type="button">Palm</button>
         <button data-grade="vice" class="chip" type="button">Vice Purple</button>
+        <button data-grade="golden" class="chip" type="button">Golden Hour</button>
       </div>
+    </div>
+
+    <div class="group">
+      <h2>Surprise me</h2>
+      <button id="randomize" type="button" class="randomize" aria-label="Randomize layout, grade, caption and photo placement">🎲 Randomize cover</button>
+      <p class="hint">One tap shuffles the layout, grade, caption and which photo sits in each panel. Press R on a keyboard for the same.</p>
     </div>
 
     <div class="group">
@@ -41,6 +48,7 @@
         <button data-preset="2" class="chip preset" type="button">Boulevard Queen</button>
         <button data-preset="3" class="chip preset" type="button">Palm Paradise</button>
         <button data-preset="4" class="chip preset" type="button">Neon Getaway</button>
+        <button data-preset="5" class="chip preset" type="button">Golden Hour</button>
       </div>
     </div>
 
@@ -69,10 +77,10 @@
         <span>or drop images here</span>
       </div>
       <div id="thumbs" class="thumbs"></div>
-      <p class="hint">Click a panel on the cover, then a photo, to place it. Drag a photo to move it, scroll over it to zoom.</p>
-      <div id="panel-btns" class="row"></div>
+      <p class="hint">Click a panel on the cover, then a photo, to place it. Drag a photo to move it, scroll over it to zoom. The selected panel's button is highlighted below.</p>
+      <div id="panel-btns" class="row" role="group" aria-label="Choose the panel to edit"></div>
       <label class="slider">Zoom panel
-        <input id="zoom" type="range" min="100" max="300" value="100">
+        <input id="zoom" type="range" min="100" max="300" value="100" aria-label="Zoom the selected panel">
         <span id="zoom-val">100%</span>
       </label>
       <button id="reset-panel" type="button" class="ghost">Reset panel position</button>

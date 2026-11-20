@@ -4,7 +4,7 @@
 //
 // state = {
 //   layout: 'grid' | 'hero' | 'full',
-//   grade: 'sunset' | 'neon' | 'noir' | 'palm' | 'vice',
+//   grade: 'sunset' | 'neon' | 'noir' | 'palm' | 'vice' | 'golden',
 //   title: string, subtitle: string,
 //   panels: [{ img: HTMLImageElement | null, ox: number, oy: number, zoom: number }]
 // }
@@ -24,6 +24,8 @@ export const GRADES = {
   noir: { name: 'Noir', accent: '#e8e8e8' },
   palm: { name: 'Palm', accent: '#2ee6c8' },
   vice: { name: 'Vice Purple', accent: '#c04dff' },
+  // Golden Hour: amber/teal duotone — warm honey highlights, cool teal shadows.
+  golden: { name: 'Golden Hour', accent: '#ffc23d' },
 };
 
 /** One-tap GTA-style caption pairs: [title, subtitle]. */
@@ -33,6 +35,7 @@ export const CAPTIONS = [
   ['Boulevard Queen', 'Vice City'],
   ['Palm Paradise', 'Grand Theft Auto VI'],
   ['Neon Getaway', 'Leonida'],
+  ['Golden Hour', 'Vice City'],
 ];
 
 /** Panel rectangles for a layout, in canvas pixels. Gutters are cream poster lines. */
@@ -82,6 +85,7 @@ function drawPhoto(ctx, img, rect, panel, grade) {
       noir: ['#3a3a3a', '#1c1c1c', '#101010'],
       palm: ['#0f4a3a', '#0a2e26', '#061a15'],
       vice: ['#4a1d7a', '#2a0f4d', '#180830'],
+      golden: ['#6b3d10', '#3d2408', '#1f1204'],
     }[grade] || ['#3b1d5e', '#1c0f33', '#12081f'];
     const grad = ctx.createLinearGradient(x, y, x + w, y + h);
     grad.addColorStop(0, empty[0]);
@@ -98,6 +102,8 @@ function drawPhoto(ctx, img, rect, panel, grade) {
   }
   if (grade === 'noir') ctx.filter = 'grayscale(1) contrast(1.12) brightness(1.04)';
   if (grade === 'vice') ctx.filter = 'saturate(1.3) contrast(1.06)';
+  // Golden Hour warms the photo itself: a sepia-amber lift before the overlays.
+  if (grade === 'golden') ctx.filter = 'sepia(0.35) saturate(1.25) contrast(1.05) brightness(1.03)';
   const base = Math.max(w / img.naturalWidth, h / img.naturalHeight);
   const scale = base * (panel.zoom || 1);
   const dw = img.naturalWidth * scale;
@@ -146,6 +152,21 @@ function gradeOverlay(ctx, grade, W, H) {
     grad.addColorStop(1, 'rgba(60,0,120,0.30)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
+  } else if (grade === 'golden') {
+    // golden hour: honey-amber light falling from the top, teal shadows
+    // pooling at the bottom — the duotone opposite of Sunset's pink foot.
+    grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, 'rgba(255,180,60,0.26)');
+    grad.addColorStop(0.45, 'rgba(255,150,40,0.08)');
+    grad.addColorStop(1, 'rgba(0,90,110,0.30)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    // A soft amber glow high in the frame, like low sun just out of shot.
+    const glow = ctx.createRadialGradient(W * 0.78, H * 0.06, 0, W * 0.78, H * 0.06, Math.max(W, H) * 0.55);
+    glow.addColorStop(0, 'rgba(255,205,110,0.22)');
+    glow.addColorStop(1, 'rgba(255,205,110,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
   } else {
     // palm: teal top, warm gold bottom
     grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -156,12 +177,18 @@ function gradeOverlay(ctx, grade, W, H) {
     ctx.fillRect(0, 0, W, H);
   }
   // Vignette on every grade: darkens the edges, pulls the eye to the middle.
+  // Golden Hour's vignette is warm amber instead of black, so the grade
+  // keeps its honey glow right to the corners.
   const vig = ctx.createRadialGradient(
     W / 2, H * 0.45, Math.min(W, H) * 0.42,
     W / 2, H / 2, Math.max(W, H) * 0.75,
   );
   vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, grade === 'noir' ? 'rgba(0,0,0,0.5)' : grade === 'vice' ? 'rgba(20,0,40,0.38)' : 'rgba(0,0,0,0.28)');
+  const vigEnd = grade === 'noir' ? 'rgba(0,0,0,0.5)'
+    : grade === 'vice' ? 'rgba(20,0,40,0.38)'
+    : grade === 'golden' ? 'rgba(70,30,0,0.36)'
+    : 'rgba(0,0,0,0.28)';
+  vig.addColorStop(1, vigEnd);
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 }

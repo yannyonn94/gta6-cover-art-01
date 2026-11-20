@@ -1,8 +1,10 @@
 // Fixed scenes for screenshots: ?shot=editor shows the page with sample photos;
 // ?shot=cover shows the cover alone.
-// Query params: layout (grid|hero|full), grade (sunset|neon|noir|palm|vice),
+// Query params: layout (grid|hero|full), grade (sunset|neon|noir|palm|vice|golden),
 // size (1080x1080|1080x1350|1920x1080), photo (comma list of sample names),
-// caption (the title), subtitle, preset (index into the CAPTIONS list).
+// caption (the title), subtitle, preset (index into the CAPTIONS list),
+// shuffle (1 = deal a seeded random layout/grade/caption/photo order),
+// seed (integer seed for shuffle).
 // window.__shotReady is set once painted.
 import { CAPTIONS } from './cover.js';
 const SIZES = {
@@ -30,7 +32,7 @@ export async function runShot(shot, query, state, draw) {
   const layout = query.get('layout');
   if (layout === 'grid' || layout === 'hero' || layout === 'full') state.layout = layout;
   const grade = query.get('grade');
-  if (grade === 'sunset' || grade === 'neon' || grade === 'noir' || grade === 'palm' || grade === 'vice') {
+  if (grade === 'sunset' || grade === 'neon' || grade === 'noir' || grade === 'palm' || grade === 'vice' || grade === 'golden') {
     state.grade = grade;
   }
   const preset = Number(query.get('preset'));
@@ -43,6 +45,29 @@ export async function runShot(shot, query, state, draw) {
   if (title !== null) state.title = title;
   const subtitle = query.get('subtitle');
   if (subtitle !== null) state.subtitle = subtitle;
+
+  // Seeded shuffle (?shuffle=1&seed=7): the same deterministic "Randomize"
+  // a user gets from the button, so a screenshot can show a reshuffled cover
+  // and still be reproducible. Overrides layout, grade and caption above.
+  if (query.get('shuffle') === '1') {
+    let s = Number(query.get('seed') || '1') >>> 0;
+    const rnd = () => {
+      s |= 0; s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const layouts = ['grid', 'hero', 'full'];
+    const grades = ['sunset', 'neon', 'noir', 'palm', 'vice', 'golden'];
+    state.layout = layouts[Math.floor(rnd() * layouts.length)];
+    state.grade = grades[Math.floor(rnd() * grades.length)];
+    if (rnd() < 0.5) {
+      [state.title, state.subtitle] = CAPTIONS[Math.floor(rnd() * CAPTIONS.length)];
+    } else {
+      state.title = CAPTIONS[Math.floor(rnd() * CAPTIONS.length)][0];
+      state.subtitle = CAPTIONS[Math.floor(rnd() * CAPTIONS.length)][1];
+    }
+  }
 
   // Photos: comma list of sample names, one per panel; repeats are fine.
   const names = (query.get('photo') || 'pier,boulevard,boulevard,pier').split(',');

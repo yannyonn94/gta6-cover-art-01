@@ -92,6 +92,74 @@ function applyCaption(i) {
   drawCover(canvas, state);
 }
 
+/** Picks a random element that is different from `current` when possible. */
+function pickOther(list, current) {
+  if (list.length <= 1) return list[0];
+  let next = current;
+  while (next === current) next = list[Math.floor(Math.random() * list.length)];
+  return next;
+}
+
+/** Shuffles a copy of an array in place (Fisher–Yates). */
+function shuffle(list) {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
+/**
+ * One-tap reshuffle: a new layout, a new grade, a new caption and a fresh
+ * photo assignment across the panels. Layout and grade always change; the
+ * caption is either a whole preset or a mixed title/subtitle pair, and the
+ * photos are dealt in a shuffled order so the cover visibly changes.
+ */
+function randomize() {
+  const oldLayout = state.layout;
+  const oldGrade = state.grade;
+  state.layout = pickOther(Object.keys(LAYOUTS), oldLayout);
+  state.grade = pickOther(Object.keys(GRADES), oldGrade);
+
+  // Caption: half the time a whole preset, half a mixed title/subtitle pair.
+  if (Math.random() < 0.5) {
+    const i = Math.floor(Math.random() * CAPTIONS.length);
+    [state.title, state.subtitle] = CAPTIONS[i];
+  } else {
+    const t = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)][0];
+    const s = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)][1];
+    state.title = t;
+    state.subtitle = s;
+  }
+  document.getElementById('title').value = state.title;
+  document.getElementById('subtitle').value = state.subtitle;
+
+  // Photos: shuffle the library, deal one per panel, reset pan/zoom.
+  const dealt = shuffle(state.library.map((l) => l.img));
+  for (let i = 0; i < 4; i++) {
+    state.panels[i].img = dealt[i % Math.max(1, dealt.length)] || null;
+    state.panels[i].ox = 0;
+    state.panels[i].oy = 0;
+    state.panels[i].zoom = 1;
+  }
+  state.selected = 0;
+  zoomEl.value = '100';
+  zoomValEl.textContent = '100%';
+
+  document.querySelectorAll('[data-layout]').forEach((b) =>
+    b.classList.toggle('active', b.dataset.layout === state.layout));
+  document.querySelectorAll('[data-grade]').forEach((b) =>
+    b.classList.toggle('active', b.dataset.grade === state.grade));
+  document.querySelectorAll('[data-preset]').forEach((b) =>
+    b.classList.toggle('active', CAPTIONS[Number(b.dataset.preset)] &&
+      CAPTIONS[Number(b.dataset.preset)][0] === state.title &&
+      CAPTIONS[Number(b.dataset.preset)][1] === state.subtitle));
+  document.querySelectorAll('[data-size]').forEach((b) =>
+    b.classList.toggle('active', b.dataset.size === state.size));
+  statusEl.textContent = `Randomized: ${LAYOUTS[state.layout].name} · ${GRADES[state.grade].name} · “${state.title}”`;
+  redraw();
+}
+
 function selectPanel(i) {
   state.selected = Math.min(i, panelCount() - 1);
   const p = state.panels[state.selected];
@@ -133,6 +201,7 @@ function renderPanelButtons() {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'chip' + (i === state.selected ? ' active' : '');
+    b.setAttribute('aria-pressed', i === state.selected ? 'true' : 'false');
     const p = state.panels[i];
     const name = p.img ? photoName(p.img) : 'empty';
     b.textContent = `Panel ${i + 1} · ${name}`;
@@ -306,7 +375,13 @@ document.getElementById('reset-panel').addEventListener('click', () => {
   panel.zoom = 1;
   zoomEl.value = '100';
   zoomValEl.textContent = '100%';
+  statusEl.textContent = `Panel ${state.selected + 1} reset to fit`;
   drawCover(canvas, state);
+});
+// Keyboard shortcut: R reshuffles the cover (not while typing in a field).
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  if ((e.key === 'r' || e.key === 'R') && tag !== 'INPUT' && tag !== 'TEXTAREA') randomize();
 });
 document.getElementById('clear-panel').addEventListener('click', clearPanel);
 document.getElementById('photo').addEventListener('change', (e) => addFiles(e.target.files));
@@ -318,6 +393,7 @@ const dropzone = document.getElementById('dropzone');
   dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('over'); }));
 dropzone.addEventListener('drop', (e) => addFiles(e.dataTransfer.files));
 
+document.getElementById('randomize').addEventListener('click', randomize);
 document.getElementById('export').addEventListener('click', async () => {
   const name = await exportOne(state.size);
   statusEl.textContent = `Saved ${name}`;

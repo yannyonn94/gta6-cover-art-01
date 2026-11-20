@@ -5,8 +5,9 @@
 # Vice Cover Studio
 
 A free, offline web app that turns your photos into GTA 6-style cover art — the
-multi-panel poster look with a neon-sunset grade, now with a fifth grade
-(Vice Purple) and one-tap caption presets. Built for the
+multi-panel poster look with a neon-sunset grade, now with a sixth grade
+(Golden Hour, amber/teal duotone) and a one-tap Randomize button that reshuffles
+layout, grade, caption and photo placement. Built for the
 [make.fun bounty gta6-cover-art-01](https://make.fun/bounty/gta6-cover-art-01).
 
 ## What it does
@@ -14,10 +15,13 @@ multi-panel poster look with a neon-sunset grade, now with a fifth grade
 - **3 layouts** — Grid 2×2, Hero + 3, and Full bleed.
 - **Any photos** — upload your own (or drop them in), pick a photo per panel,
   drag to reposition and scroll / slide to zoom each panel.
-- **5 grades** — Sunset, Neon Vice, Noir, Palm and the new Vice Purple
-  (violet/magenta neon), each with its own grade overlays and vignette.
+- **6 grades** — Sunset, Neon Vice, Noir, Palm, Vice Purple and the new Golden
+  Hour (warm amber highlights over cool teal shadows, with its own amber glow
+  and warm vignette), each with its own grade overlays and vignette.
+- **Randomize** — one tap (or the R key) shuffles the layout, grade, caption
+  and which photo sits in each panel, so every tap is a new cover.
 - **Caption** — editable title and subtitle in heavy display lettering
-  (Anton, vendored locally, OFL), or pick one of 5 ready-made GTA-style
+  (Anton, vendored locally, OFL), or pick one of 6 ready-made GTA-style
   caption presets in one tap.
 - **Export** — one-click PNG in 1080×1080, 1080×1350 and 1920×1080, drawn at
   full resolution on an offscreen canvas.
@@ -37,6 +41,11 @@ One tap fills title + subtitle with a ready-made GTA-style pair:
 | Boulevard Queen | Boulevard Queen | Vice City |
 | Palm Paradise | Palm Paradise | Grand Theft Auto VI |
 | Neon Getaway | Neon Getaway | Leonida |
+| Golden Hour | Golden Hour | Vice City |
+
+Randomize picks either a whole preset from this table or a mixed title +
+subtitle pair, so a reshuffled cover can also land on a caption no preset
+lists.
 
 ## Try it
 
@@ -44,6 +53,20 @@ One tap fills title + subtitle with a ready-made GTA-style pair:
 node serve.ts
 # open http://localhost:8080
 ```
+
+## Screenshots
+
+`screenshots/` holds four shots of the app, driven by `shots.json`
+(`?shot=cover` for the cover alone, `?shot=editor` for the full editor):
+
+1. **1-cover.jpg** — the Golden Hour grade on the Grid 2×2 layout.
+2. **2-editor.jpg** — the editor with the new Randomize button and the
+   Golden Hour chip visible in the controls.
+3. **3-cover.jpg** — a seeded Randomize result (Hero + 3, Golden Hour, mixed
+   caption) at the tall 1080×1350 export size.
+4. **4-cover.jpg** — the Golden Hour grade on the wide 1920×1080 export.
+
+Each is a JPEG under 256 KiB, long side at most 1280 px.
 
 ## Hand it in
 

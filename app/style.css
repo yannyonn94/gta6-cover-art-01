@@ -20,6 +20,8 @@ html, body { margin: 0; min-height: 100%; background: #14081f; color: #f2ecf7; f
 .chip:hover { border-color: #ff2e9a; }
 .chip.active { background: #ff2e9a; border-color: #ff2e9a; color: #fff; }
 .chip[data-grade="vice"].active { background: #8b2fe0; border-color: #c04dff; }
+.chip[data-grade="golden"].active { background: #e8960f; border-color: #ffc23d; color: #241300; }
+.chip[data-grade="golden"]:hover { border-color: #ffc23d; }
 .chip.preset { font-size: 13px; padding: 6px 10px; border-style: dashed; }
 .chip.preset.active { background: #ffb347; border-color: #ffb347; border-style: solid; color: #1c0f33; }
 
@@ -32,8 +34,12 @@ input[type=text]:focus { outline: 2px solid #ff2e9a; outline-offset: 1px; }
 .file-btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #ff2e9a; color: #fff; font-weight: 700; cursor: pointer; }
 .file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
 
-.thumbs { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
-.thumb { display: flex; flex-direction: column; gap: 2px; width: 84px; flex: none; padding: 0; border: 2px solid transparent; border-radius: 8px; background: none; cursor: pointer; color: #c9b8d6; font: 11px/1.2 system-ui, sans-serif; }
+/* The selected panel's button reads as "you are editing this one". */
+#panel-btns .chip.active { background: #ffb347; border-color: #ffb347; color: #1c0f33; }
+#panel-btns .chip { font-size: 13px; }
+
+.thumbs { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; scroll-snap-type: x mandatory; }
+.thumb { display: flex; flex-direction: column; gap: 2px; width: 84px; flex: none; padding: 0; border: 2px solid transparent; border-radius: 8px; background: none; cursor: pointer; color: #c9b8d6; font: 11px/1.2 system-ui, sans-serif; scroll-snap-align: start; }
 .thumb img { width: 100%; height: 62px; object-fit: cover; border-radius: 6px; display: block; }
 .thumb span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .thumb:hover { border-color: #6b4d86; }
@@ -47,6 +53,16 @@ input[type=text]:focus { outline: 2px solid #ff2e9a; outline-offset: 1px; }
 button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 8px; background: #2c1a3e; color: #fff; cursor: pointer; }
 button:hover { filter: brightness(1.15); }
 button.primary { background: #ff2e9a; font-size: 16px; padding: 12px; }
+
+/* Randomize: amber-to-teal gradient, the Golden Hour duotone in button form. */
+button.randomize {
+  background: linear-gradient(100deg, #e8960f 0%, #ffb347 45%, #0e7d8a 100%);
+  color: #fff;
+  font-size: 15px;
+  padding: 12px;
+  box-shadow: 0 4px 18px rgba(232, 150, 15, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
 button.ghost { background: transparent; border: 1px solid #4a365e; color: #c9b8d6; font-weight: 600; }
 .export-group { gap: 10px; }
 .export-group button { width: 100%; }
@@ -66,6 +82,9 @@ canvas:active { cursor: grabbing; }
   .controls { width: auto; }
   canvas { width: 100%; }
   .controls h1 { font-size: 30px; }
+  /* Full-width action buttons are easier to tap on a phone. */
+  button.randomize, button.primary, #export-all { width: 100%; }
+  .row { gap: 6px; }
 }
 
 body.shot-cover .controls { display: none; }
