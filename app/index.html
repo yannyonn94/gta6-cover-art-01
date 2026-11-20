@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Cover Studio — GTA 6 cover art maker</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="app">
+  <section class="controls">
+    <h1>Vice Cover Studio</h1>
+    <p class="tag">Turn your photos into GTA 6-style cover art. Works fully offline — your photos never leave this machine.</p>
+
+    <div class="group">
+      <h2>Layout</h2>
+      <div class="row">
+        <button data-layout="grid" class="chip active" type="button">Grid 2×2</button>
+        <button data-layout="hero" class="chip" type="button">Hero + 3</button>
+        <button data-layout="full" class="chip" type="button">Full bleed</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Grade</h2>
+      <div class="row">
+        <button data-grade="sunset" class="chip active" type="button">Sunset</button>
+        <button data-grade="neon" class="chip" type="button">Neon Vice</button>
+        <button data-grade="noir" class="chip" type="button">Noir</button>
+        <button data-grade="palm" class="chip" type="button">Palm</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Export size</h2>
+      <div class="row">
+        <button data-size="1080x1080" class="chip active" type="button">1080 × 1080</button>
+        <button data-size="1080x1350" class="chip" type="button">1080 × 1350</button>
+        <button data-size="1920x1080" class="chip" type="button">1920 × 1080</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Caption</h2>
+      <label>Title <input id="title" type="text" maxlength="40" value="Sunset Heist"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="30" value="Vice City"></label>
+    </div>
+
+    <div class="group">
+      <h2>Photos</h2>
+      <div id="dropzone" class="dropzone">
+        <label class="file-btn">Add photos
+          <input id="photo" type="file" accept="image/*" multiple>
+        </label>
+        <span>or drop images here</span>
+      </div>
+      <div id="thumbs" class="thumbs"></div>
+      <p class="hint">Click a panel on the cover, then a photo, to place it. Drag a photo to move it, scroll over it to zoom.</p>
+      <div id="panel-btns" class="row"></div>
+      <label class="slider">Zoom panel
+        <input id="zoom" type="range" min="100" max="300" value="100">
+        <span id="zoom-val">100%</span>
+      </label>
+      <button id="reset-panel" type="button" class="ghost">Reset panel position</button>
+      <button id="clear-panel" type="button" class="ghost">Clear panel photo</button>
+    </div>
+
+    <div class="group">
+      <button id="export" type="button" class="primary">Export PNG</button>
+      <button id="export-all" type="button">Export all 3 sizes</button>
+      <p id="status" role="status"></p>
+    </div>
+    <p class="foot">Sample photos ship with the kit and are free to use. No Rockstar artwork, logos or fonts are used.</p>
+  </section>
+  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+</main>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
