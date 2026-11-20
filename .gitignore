@@ -6,8 +6,7 @@ node_modules/
 # local screenshot tooling leftovers (exports are downloads, not repo files)
 playwright-report/
 test-results/
-# exported covers accidentally saved next to the repo instead of Downloads
-vice-cover-*.png
-# headless-browser profiles and temp captures from screenshot runs
 .playwright/
 screenshots/*.tmp
+# exported covers accidentally saved next to the repo instead of Downloads
+neon-sunset-cover-*.png

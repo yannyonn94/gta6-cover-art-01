@@ -3,99 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vice Cover Studio — GTA 6 cover art maker</title>
-<link rel="icon" href="data:,">
+<title>Neon Sunset Cover Studio</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Vice Cover Studio</h1>
-    <p class="tag">Turn your photos into GTA 6-style cover art. Works fully offline — your photos never leave this machine.</p>
-
-    <div class="group">
-      <h2>Layout</h2>
-      <div class="row">
-        <button data-layout="grid" class="chip active" type="button">Grid 2×2</button>
-        <button data-layout="hero" class="chip" type="button">Hero + 3</button>
-        <button data-layout="full" class="chip" type="button">Full bleed</button>
-      </div>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">NS</span>
+    <div>
+      <h1>Neon Sunset Cover Studio</h1>
+      <p>Turn any photo into a multi-panel sunset cover — offline, nothing uploads.</p>
     </div>
+  </div>
+  <div class="top-actions">
+    <button id="shuffleBtn" type="button" title="Random layout, grade and panel photos">Shuffle look</button>
+    <button id="resetBtn" type="button" title="Back to the fresh sample cover">Reset</button>
+  </div>
+</header>
 
-    <div class="group">
-      <h2>Grade</h2>
-      <div class="row">
-        <button data-grade="sunset" class="chip active" type="button">Sunset</button>
-        <button data-grade="neon" class="chip" type="button">Neon Vice</button>
-        <button data-grade="noir" class="chip" type="button">Noir</button>
-        <button data-grade="palm" class="chip" type="button">Palm</button>
-        <button data-grade="vice" class="chip" type="button">Vice Purple</button>
-        <button data-grade="golden" class="chip" type="button">Golden Hour</button>
-      </div>
-    </div>
-
-    <div class="group">
-      <h2>Surprise me</h2>
-      <button id="randomize" type="button" class="randomize" aria-label="Randomize layout, grade, caption and photo placement">🎲 Randomize cover</button>
-      <p class="hint">One tap shuffles the layout, grade, caption and which photo sits in each panel. Press R on a keyboard for the same.</p>
-    </div>
-
-    <div class="group">
-      <h2>Caption presets</h2>
-      <div class="row presets">
-        <button data-preset="0" class="chip preset" type="button">Vice City Nights</button>
-        <button data-preset="1" class="chip preset" type="button">Sunset Heist</button>
-        <button data-preset="2" class="chip preset" type="button">Boulevard Queen</button>
-        <button data-preset="3" class="chip preset" type="button">Palm Paradise</button>
-        <button data-preset="4" class="chip preset" type="button">Neon Getaway</button>
-        <button data-preset="5" class="chip preset" type="button">Golden Hour</button>
-      </div>
-    </div>
-
-    <div class="group">
-      <h2>Export size</h2>
-      <div class="row">
-        <button data-size="1080x1080" class="chip active" type="button">1080 × 1080</button>
-        <button data-size="1080x1350" class="chip" type="button">1080 × 1350</button>
-        <button data-size="1920x1080" class="chip" type="button">1920 × 1080</button>
-      </div>
-    </div>
-
-    <div class="group">
-      <h2>Caption</h2>
-      <label>Title <input id="title" type="text" maxlength="40" value="Sunset Heist"></label>
-      <label>Subtitle <input id="subtitle" type="text" maxlength="30" value="Vice City"></label>
-      <p class="hint">Or tap a preset above — it fills both fields at once.</p>
-    </div>
-
-    <div class="group">
-      <h2>Photos</h2>
-      <div id="dropzone" class="dropzone">
-        <label class="file-btn">Add photos
-          <input id="photo" type="file" accept="image/*" multiple>
-        </label>
-        <span>or drop images here</span>
-      </div>
-      <div id="thumbs" class="thumbs"></div>
-      <p class="hint">Click a panel on the cover, then a photo, to place it. Drag a photo to move it, scroll over it to zoom. The selected panel's button is highlighted below.</p>
-      <div id="panel-btns" class="row" role="group" aria-label="Choose the panel to edit"></div>
-      <label class="slider">Zoom panel
-        <input id="zoom" type="range" min="100" max="300" value="100" aria-label="Zoom the selected panel">
-        <span id="zoom-val">100%</span>
-      </label>
-      <button id="reset-panel" type="button" class="ghost">Reset panel position</button>
-      <button id="clear-panel" type="button" class="ghost">Clear panel photo</button>
-    </div>
-
-    <div class="group export-group">
-      <button id="export" type="button" class="primary" aria-label="Export this cover as a PNG">Export PNG</button>
-      <button id="export-all" type="button" aria-label="Export this cover in all three sizes">Export all 3 sizes</button>
-      <p id="status" role="status"></p>
-    </div>
-    <p class="foot">Sample photos ship with the kit and are free to use. No Rockstar artwork, logos or fonts are used.</p>
+<main class="studio">
+  <section class="preview-pane" aria-label="Cover preview">
+    <canvas id="stage" width="1080" height="1080" aria-label="The cover art preview"></canvas>
+    <p class="hint">Pick a panel in the strip below, then drag on the cover to move its photo, or scroll over it to zoom.</p>
+    <div class="panel-strip" id="panelStrip" role="group" aria-label="Panels"></div>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <aside class="panel" aria-label="Cover controls">
+    <section class="group">
+      <h2>1 · Photos</h2>
+      <label class="file-btn">Add a photo
+        <input id="photoFile" type="file" accept="image/*" multiple>
+      </label>
+      <p class="note">Each photo you add fills the selected panel. “Fill all” puts one photo across every panel.</p>
+      <div class="row">
+        <button id="fillAllBtn" type="button">Fill all panels</button>
+        <button id="sampleBtn" type="button">Use sample photos</button>
+      </div>
+      <div class="thumbs" id="photoTray" aria-label="Loaded photos"></div>
+    </section>
+
+    <section class="group">
+      <h2>2 · Panel photo</h2>
+      <label>Zoom <span id="zoomVal">100%</span>
+        <input id="zoomSlider" type="range" min="100" max="260" value="100" step="1">
+      </label>
+      <label>Move sideways <span id="panXVal">0</span>
+        <input id="panXSlider" type="range" min="-100" max="100" value="0" step="1">
+      </label>
+      <label>Move up / down <span id="panYVal">0</span>
+        <input id="panYSlider" type="range" min="-100" max="100" value="0" step="1">
+      </label>
+    </section>
+
+    <section class="group">
+      <h2>3 · Layout</h2>
+      <div class="choices" id="layoutChoices">
+        <button type="button" data-layout="quad" class="choice is-on">Four squares</button>
+        <button type="button" data-layout="hero" class="choice">Hero + three</button>
+        <button type="button" data-layout="stack" class="choice">Tall stack</button>
+        <button type="button" data-layout="single" class="choice">Full bleed</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>4 · Sunset grade</h2>
+      <div class="choices" id="gradeChoices">
+        <button type="button" data-grade="sunset" class="choice is-on">Golden Hour</button>
+        <button type="button" data-grade="neon" class="choice">Neon Night</button>
+        <button type="button" data-grade="vice" class="choice">Vice Violet</button>
+        <button type="button" data-grade="mono" class="choice">Mono Dusk</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>5 · Lettering</h2>
+      <label>Headline
+        <input id="headline" type="text" maxlength="28" value="NEON SUNSET" autocomplete="off">
+      </label>
+      <label>Script subtitle
+        <input id="subtitle" type="text" maxlength="40" value="Vice City nights" autocomplete="off">
+      </label>
+      <label>Title size <span id="titleVal">100%</span>
+        <input id="titleSlider" type="range" min="70" max="140" value="100" step="1">
+      </label>
+    </section>
+
+    <section class="group">
+      <h2>6 · Export</h2>
+      <div class="choices" id="sizeChoices">
+        <button type="button" data-size="1080x1080" class="choice is-on">Square · 1080×1080</button>
+        <button type="button" data-size="1080x1350" class="choice">Portrait · 1080×1350</button>
+        <button type="button" data-size="1920x1080" class="choice">Wide · 1920×1080</button>
+      </div>
+      <button id="exportBtn" type="button" class="export">Download cover PNG</button>
+      <p id="status" role="status"></p>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<footer class="foot">
+  <p>Original art made on your machine. Fonts Anton &amp; Pacifico under the SIL Open Font License. No Rockstar Games logo, artwork or font is used.</p>
+</footer>
+
+<script type="module" src="./src/studio.js"></script>
 </body>
 </html>
